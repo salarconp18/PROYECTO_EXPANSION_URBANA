@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+import contextily as ctx
+import numpy as np
 
-
+###################################################################################################################
 # Función de visualización de mapa categórico de uso actual del suelo
     
 def plot_uso_suelo(gdf, municipio, columna='CS_TIPO', titulo='Uso actual del suelo'):
@@ -41,10 +43,17 @@ def plot_uso_suelo(gdf, municipio, columna='CS_TIPO', titulo='Uso actual del sue
     ax.legend(handles=legend, loc='upper left', title='Uso del Suelo', fontsize=8)
     ax.set_title(titulo)
     ax.axis('off')
-    plt.show()
 
+    ctx.add_basemap(
+    ax,
+    source=ctx.providers.OpenStreetMap.Mapnik,
+    crs=municipio.crs.to_string()  # asegúrate de que el CRS sea compatible
+)
+    return fig, ax
 
+########################################################################################################################################
 # Función de visualización de mapa categórico de coberturas de la tierra
+
 def plot_coberturas(gdf, municipio, columna='nivel_1', titulo='Coberturas de la tierra'):
     """
     Genera un mapa temático de coberturas del suelo con categorías y colores predefinidos.
@@ -86,9 +95,14 @@ def plot_coberturas(gdf, municipio, columna='nivel_1', titulo='Coberturas de la 
     ax.legend(handles=legend, loc='upper left', title='Cobertura', fontsize=8)
     ax.set_title(titulo)
     ax.axis('off')
-    plt.show()
+    ctx.add_basemap(
+    ax,
+    source=ctx.providers.OpenStreetMap.Mapnik,
+    crs=municipio.crs.to_string()  # asegúrate de que el CRS sea compatible
+)
+    return fig, ax
 
-
+########################################################################################################################################
 # Función de visualización de mapa categórico de Amenazas
     
 def plot_amenazas(gdf, municipio, columna='Amenaza', titulo='Mapa de Amenaza'):
@@ -130,4 +144,46 @@ def plot_amenazas(gdf, municipio, columna='Amenaza', titulo='Mapa de Amenaza'):
     ax.legend(handles=legend, loc='upper left', title='Amenaza', fontsize=8)
     ax.set_title(titulo)
     ax.axis('off')
+    ctx.add_basemap(
+    ax,
+    source=ctx.providers.OpenStreetMap.Mapnik,
+    crs=municipio.crs.to_string()  # asegúrate de que el CRS sea compatible
+)
+    return fig, ax
+
+    
+########################################################################################################################################
+#Función de visualización general DTM y generación histograma
+
+def visualizar_dem(dem_array):
+    """
+    Visualiza un DEM mostrando:
+    - Histograma de elevaciones
+    - Mapa del DEM con escala de color
+    
+    Parámetros:
+    - dem_array: numpy array con los valores de elevación del DEM
+    """
+
+    # Histograma de elevaciones
+    plt.figure(figsize=(8, 4))
+    plt.hist(
+        dem_array[~np.isnan(dem_array)].flatten(),
+        bins=50,
+        color='skyblue',
+        edgecolor='black'
+    )
+    plt.title("Histograma de Elevaciones")
+    plt.xlabel("Elevación (m)")
+    plt.ylabel("Frecuencia")
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+    # Mapa del DEM
+    plt.figure(figsize=(8, 6))
+    plt.imshow(dem_array, cmap='terrain')
+    plt.colorbar(label="Elevación (m)")
+    plt.title("Visualización DEM")
+    plt.axis("off")
     plt.show()

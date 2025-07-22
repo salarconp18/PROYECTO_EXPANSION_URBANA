@@ -1,7 +1,8 @@
-#Función recorte municipio de interés
 import geopandas as gpd
 import os
 
+########################################################################################################################################
+#Función recorte municipio de interés
 def clip_vector(vector, aoi, ruta_salida=None):
     """
     Recorta una capa vectorial usando un polígono (aoi).
@@ -32,11 +33,24 @@ def clip_vector(vector, aoi, ruta_salida=None):
         print(f"Archivo guardado en: {ruta_salida}")
 
     return solo_poligonos
-    
+
+####################################################################################################################
 #Función áreas de influencia - Buffer
 
 def buffer_areas_influencia(capa_geografica, distancia_buffer, epsg_proyeccion=None):
-    """esta funcion nos ayuda a generar ese buffer al rededor de una capa de cualquier gdf, pero debemso tener los sigienters parametros: la capa geografica o sea el shp qeu vamos a utilizar ya sea punto linea o poligono. la distancia que qeuremos qeu se haga el buffer en metros y por ultimo el epsg de proyeccion. Esta funcion nos returna una nueva capa gdf con los poligonos de buffer generados"""
+    """
+    Genera áreas de influencia (buffers) alrededor de una capa vectorial de puntos, líneas o polígonos.
+
+    Parámetros:
+    - capa_geografica: GeoDataFrame que contiene la capa de entrada sobre la cual se generarán los buffers.
+    - distancia_buffer: Distancia del buffer en metros.
+    - epsg_proyeccion: Código EPSG del sistema de coordenadas proyectadas en metros. Si se especifica,
+                       la capa será reproyectada antes de calcular el buffer para asegurar que las distancias
+                       sean precisas.
+
+    Retorna:
+    - GeoDataFrame con geometrías de tipo polígono representando áreas de influencia generadas alrededor de las geometrías originales.
+    """
     # verificar sistema o convertir
     if epsg_proyeccion is not None:
         capa_proyectada = capa_geografica.to_crs(epsg=epsg_proyeccion)
@@ -60,3 +74,6 @@ def buffer_areas_influencia(capa_geografica, distancia_buffer, epsg_proyeccion=N
     copia_capa['geometry'] = lista_buffers
 
     return copia_capa
+
+
+
